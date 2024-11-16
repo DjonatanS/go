@@ -1,0 +1,10 @@
+CEP: 88139-134
+Logradouro: Rua Hilda Siegel Steinmetz
+Complemento: 
+Bairro: Praia do Sonho
+Localidade: Palhoça
+UF: SC
+IBGE: 4211900
+GIA: 
+DDD: 48
+SIAFI: 8233
