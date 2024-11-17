@@ -16,7 +16,7 @@ type Cliente struct {
 	Endereco Endereco
 }
 
-func (c Cliente) DesativarCliente() {
+func (c *Cliente) DesativarCliente() {
 	c.Ativo = false
 	fmt.Printf("O Cliente %s foi desativado", c.Nome)
 }
@@ -29,6 +29,8 @@ func main() {
 	}
 
 	djonatan.DesativarCliente()
+
+	print(djonatan.Ativo)
 
 	fmt.Printf("")
 }

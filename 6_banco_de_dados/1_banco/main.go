@@ -55,7 +55,23 @@ func main() {
 		fmt.Println(err)
 		return
 	}
-	fmt.Println("Product inserted successfully!")
+
+	/*
+		p, err := SelectProduct(db, product.ID)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		fmt.Printf("Product: %+v\n price: %f\n", p.Name, p.Price)
+	*/
+
+	products, err := SelectAllProducts(db)
+	if err != nil {
+		panic(err)
+	}
+	for _, p := range products {
+		fmt.Printf("Name: %v, Price: %.2f \n", p.Name, p.Price)
+	}
 }
 
 func InsertProduct(db *sql.DB, product *Product) error {
@@ -98,6 +114,57 @@ func CreateProductTable(db *sql.DB) error {
 	defer stmt.Close()
 
 	_, err = stmt.Exec()
+	if err != nil {
+		return fmt.Errorf("error executing statement: %w", err)
+	}
+
+	return nil
+}
+
+func SelectProduct(db *sql.DB, id string) (*Product, error) {
+	stmt, err := db.Prepare("SELECT id, name, price FROM products WHERE id = $1")
+	if err != nil {
+		return nil, fmt.Errorf("error preparing statement: %w", err)
+	}
+	defer stmt.Close()
+
+	var product Product
+	err = stmt.QueryRow(id).Scan(&product.ID, &product.Name, &product.Price)
+	if err != nil {
+		return nil, fmt.Errorf("error scanning row: %w", err)
+	}
+
+	return &product, nil
+}
+
+func SelectAllProducts(db *sql.DB) ([]Product, error) {
+	rows, err := db.Query("SELECT id, name , price FROM products")
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var products []Product
+
+	for rows.Next() {
+		var p Product
+		err = rows.Scan(&p.ID, &p.Name, &p.Price)
+		if err != nil {
+			return nil, err
+		}
+		products = append(products, p)
+	}
+	return products, nil
+}
+
+func DeleteProduct(db *sql.DB, id string) error {
+	stmt, err := db.Prepare("DELETE FROM products WHERE id = $1")
+	if err != nil {
+		return fmt.Errorf("error preparing statement: %w", err)
+	}
+	defer stmt.Close()
+
+	_, err = stmt.Exec(id)
 	if err != nil {
 		return fmt.Errorf("error executing statement: %w", err)
 	}
