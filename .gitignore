@@ -1,3 +1,10 @@
 6_banco_de_dados/data/
-pkg
-bin
+pkg/
+bin/
+*csv
+*parquet
+*.db
+*.sqlite
+*.db-journal
+*.sqlite-journal
+*.db-shm
